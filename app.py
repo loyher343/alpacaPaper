@@ -5,6 +5,7 @@ from chalice import Chalice
 
 app = Chalice(app_name='tradingwiew-webhook-alerts')
 
+
 BASE_URL = "https://paper-api.alpaca.markets"
 ACCOUNT_URL = "{}/v2/account".format(BASE_URL)
 ORDERS_URL ="{}/v2/orders".format(BASE_URL)
@@ -42,38 +43,3 @@ def buy_stock():
         'webhook_message': webhook_message
     }
 
-#28:00
-
-
-# The view function above will return {"hello": "world"}
-# whenever you make an HTTP GET request to '/'.
-#
-# Here are a few more examples:
-#
-# @app.route('/hello/{name}')
-# def hello_name(name):
-#    # '/hello/james' -> {"hello": "james"}
-#    return {'hello': name}
-#
-# @app.route('/users', methods=['POST'])
-# def create_user():
-#     # This is the JSON body the user sent in their POST request.
-#     user_as_json = app.current_request.json_body
-#     # We'll echo the json body back to the user in a 'user' key.
-#     return {'user': user_as_json}
-#
-# See the README documentation for more examples.
-#
-
-
-# {
-#     "open": {{open}},
-#     "high": {{high}},
-#     "low": {{low}},
-#     "close": {{close}},
-#     "exchange": "{{exchange}}",
-#     "ticker": "{{ticker}}",
-#     "volume": {{volume}},
-#     "time": "{{time}}",
-#     "timenow": "{{timenow}}"
-# }
