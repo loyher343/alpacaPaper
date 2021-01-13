@@ -11,19 +11,23 @@ ACCOUNT_URL = "{}/v2/account".format(BASE_URL)
 ORDERS_URL ="{}/v2/orders".format(BASE_URL)
 HEADERS = {'APCA-API-KEY-ID': API_KEY, 'APCA-API-SECRET-KEY': SECRET_KEY}
 
+# @app.route('/')
+# def index():
+#     return {'yo'}
+
 @app.route('/buy_stock', methods=['POST'])
 def buy_stock():
     request = app.current_request
     webhook_message = request.json_body
     data = {
-        "buy/sell": webhook_message['buy/sell'],
+        "side": webhook_message['buy/sell'],
         "symbol": webhook_message['ticker'],
         "qty": 1,
-        "side": "buy",
-        "type": "limit",
-        "limit_price": webhook_message['close'],
-        "time_in_force": "gtc",
-        "order_class": "bracket",
+        "side": "buy",                                          # buy or sell
+        "type": "limit",                                        # market, limit, stop, stop_limit, or trailing_stop
+        "limit_price": webhook_message['close'],                # required if type is limit or stop_limit
+        "time_in_force": "gtc",                                 # day, gtc, opg, cls, ioc, fok.
+        "order_class": "bracket",                               # simple, bracket, oco or oto.
         "take_profit": {
             "limit_price": webhook_message['close'] * 1.05
         },
