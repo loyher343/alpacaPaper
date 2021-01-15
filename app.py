@@ -33,7 +33,11 @@ def buy_stock():
     print(acc_info)
     space("accountInfo")
 
-
+    #print(type(acc_info['day_count']))
+    acc_info['day_count']=4
+    if acc_info['day_count'] > 3:
+        yo ="yo"
+        return yo
 
     position_request = requests.get(POSITIONS_URL, headers=HEADERS)
     position_response = json.loads(position_request.content)
