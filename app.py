@@ -20,7 +20,7 @@ def space(str):
 
 @app.route('/buy_stock', methods=['POST'])
 def buy_stock():
-
+    #setup
     get_account = requests.get(ACCOUNT_URL, headers=HEADERS)
     account_response = json.loads(get_account.content)
     print(account_response)
@@ -32,26 +32,18 @@ def buy_stock():
     }
     print(acc_info)
     space("accountInfo")
-
-    #print(type(acc_info['day_count']))
-    acc_info['day_count']=4
-    if acc_info['day_count'] > 3:
-        yo ="yo"
-        return yo
+    #acc_info['day_count']=4
 
     position_request = requests.get(POSITIONS_URL, headers=HEADERS)
     position_response = json.loads(position_request.content)
     print(position_response)
     space("position")
-    if position_response['message'] == 'position does not exist':
-        print(position_response['message'])
-    else:
-        position = {
-            "qty": position_response['qty']
-        }
+    position = {
+        "message":  ' ',
+        "qty": ' '
 
+    }
     
-    #setup
     request = app.current_request
     webhook_message = request.json_body
     data = {
@@ -69,7 +61,19 @@ def buy_stock():
     # print(type(acc_info["regt_BP"]))
     # print(data['limit_price'])
     
+    #stops if daytrade exceeded
+    if acc_info['day_count'] > 3:
+        return 
 
+
+
+
+    if 'message' in position_response:
+        print(position_response['message'])
+    else:
+        position = {
+            "qty": position_response['qty']
+        }
 
     if data['side'] == 'buy':
         buy_shares = float(acc_info["regt_BP"])//float(data['limit_price'])
