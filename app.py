@@ -15,14 +15,21 @@ HEADERS = {'APCA-API-KEY-ID': API_KEY, 'APCA-API-SECRET-KEY': SECRET_KEY}
 # @app.route('/')
 # def index():
 #     return {'yo'}
+def space():
+    return print('     ')
 
 @app.route('/buy_stock', methods=['POST'])
 def buy_stock():
 
+    get_account = requests.get(ACCOUNT_URL, headers=HEADERS)
+    account_response = json.loads(get_account.content)
+    print(account_response)
+    space()
+
     position_request = requests.get(POSITIONS_URL, headers=HEADERS)
     position_response = json.loads(position_request.content)
     print(position_response)
-    print('    ')
+    space()
     #setup
     request = app.current_request
     webhook_message = request.json_body
@@ -36,7 +43,7 @@ def buy_stock():
     }
 
     print(data)
-    print('    ')
+    space()
 
     #order request
     r = requests.post(ORDERS_URL, json=data, headers=HEADERS)
@@ -51,4 +58,6 @@ def buy_stock():
         'message': 'I bought the stock',
         'webhook_message': webhook_message
     }
+
+
 
