@@ -15,7 +15,7 @@ HEADERS = {'APCA-API-KEY-ID': API_KEY, 'APCA-API-SECRET-KEY': SECRET_KEY}
 
 @app.route('/')
 def index():
-    #send(EMAIL, PASSWORD, RECIPIENT)
+    bot_message(EMAIL, PASSWORD, RECIPIENT)
     return {'hello': 'world'}
 
 
