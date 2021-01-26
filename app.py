@@ -1,6 +1,7 @@
 import json, requests
 from config import *
 from chalice import Chalice
+from mail_man import *
 
 
 app = Chalice(app_name='tradingwiew-webhook-alerts')
@@ -12,9 +13,10 @@ ORDERS_URL ="{}/v2/orders".format(BASE_URL)
 POSITIONS_URL="{}/v2/positions/SPXL".format(BASE_URL)
 HEADERS = {'APCA-API-KEY-ID': API_KEY, 'APCA-API-SECRET-KEY': SECRET_KEY}
 
-# @app.route('/')
-# def index():
-#     return {'yo'}
+@app.route('/')
+def index():
+    #send(EMAIL, PASSWORD, RECIPIENT)
+    return {'hello': 'world'}
 def space(str):
     return print('     '+str+'     ')
 
@@ -64,7 +66,8 @@ def buy_stock():
     #stops if daytrade exceeded
     if acc_info['day_count'] > 3:
         return 
-
+    elif float(acc_info['regt_BP']) < float(data['limit_price']):
+        return 'not enough BP'
 
 
 
@@ -75,14 +78,17 @@ def buy_stock():
             "qty": position_response['qty']
         }
 
+    mail_message = 'MERP'
     if data['side'] == 'buy':
         buy_shares = float(acc_info["regt_BP"])//float(data['limit_price'])
         print(buy_shares)
         data['qty'] = buy_shares
+        mail_message = 'Buying '+str(buy_shares)+' shares'
     elif data['side'] == 'sell':
         data['qty'] == position['qty']
+        mail_message = 'Selling '+str(data['qty'])+' shares'
     print(data)
-
+    email_text =mail_message+' Equity at '+str(account_response['equity'])
 
 
     #order request
@@ -93,7 +99,7 @@ def buy_stock():
 
     print(response)
     #print('///////',response['id'],'////////')
-   
+    send(EMAIL, PASSWORD, RECIPIENT, email_text)
     return {
         'message': 'I bought the stock',
         'webhook_message': webhook_message
