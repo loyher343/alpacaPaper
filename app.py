@@ -1,7 +1,8 @@
 import json, requests
-from config import *
+from chalicelib.config import *
+from chalicelib.mail_man import *
 from chalice import Chalice
-from mail_man import *
+
 
 
 app = Chalice(app_name='tradingwiew-webhook-alerts')
