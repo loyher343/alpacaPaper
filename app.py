@@ -17,35 +17,33 @@ HEADERS = {'APCA-API-KEY-ID': API_KEY, 'APCA-API-SECRET-KEY': SECRET_KEY}
 def index():
     #send(EMAIL, PASSWORD, RECIPIENT)
     return {'hello': 'world'}
-def space(str):
-    return print('     '+str+'     ')
+
 
 @app.route('/buy_stock', methods=['POST'])
 def buy_stock():
     #setup
+
+    #gets account info
     get_account = requests.get(ACCOUNT_URL, headers=HEADERS)
     account_response = json.loads(get_account.content)
-    print(account_response)
-    space("account")
+
     acc_info = {
         "BP" : account_response['buying_power'],
         "regt_BP": account_response['regt_buying_power'],
         "day_count" : account_response['daytrade_count'],
     }
-    print(acc_info)
-    space("accountInfo")
-    #acc_info['day_count']=4
 
+
+    #gets postion data
     position_request = requests.get(POSITIONS_URL, headers=HEADERS)
     position_response = json.loads(position_request.content)
-    print(position_response)
-    space("position")
+
     position = {
         "message":  ' ',
         "qty": ' '
 
     }
-    
+    #webhook data catcher
     request = app.current_request
     webhook_message = request.json_body
     data = {
@@ -57,11 +55,7 @@ def buy_stock():
         "time_in_force": "gtc",                                 # day, gtc, opg, cls, ioc, fok.
     }
 
-    print(data)
-    space("data")
 
-    # print(type(acc_info["regt_BP"]))
-    # print(data['limit_price'])
     
     #stops if daytrade exceeded
     if acc_info['day_count'] > 3:
@@ -70,13 +64,14 @@ def buy_stock():
         return 'not enough BP'
 
 
-
+    #if there is a message do nothing else update qty of asset
     if 'message' in position_response:
         print(position_response['message'])
     else:
         position = {
             "qty": position_response['qty']
         }
+    
 
     mail_message = 'MERP'
     if data['side'] == 'buy':
@@ -87,7 +82,6 @@ def buy_stock():
     elif data['side'] == 'sell':
         data['qty'] == position['qty']
         mail_message = 'Selling '+str(data['qty'])+' shares'
-    print(data)
     email_text =mail_message+' Equity at '+str(account_response['equity'])
 
 
@@ -98,11 +92,9 @@ def buy_stock():
 
 
     print(response)
-    #print('///////',response['id'],'////////')
     send(EMAIL, PASSWORD, RECIPIENT, email_text)
     return {
-        'message': 'I bought the stock',
-        'webhook_message': webhook_message
+        'message': 'I bought the stock :)',
     }
 
 
