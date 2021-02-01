@@ -50,8 +50,8 @@ def buy_stock():
     data = {
         "side": webhook_message['buy/sell'],                    # buy or sell
         "symbol": webhook_message['ticker'],
-        "qty": 1,                            
-        "type": "limit",                                        # market, limit, stop, stop_limit, or trailing_stop
+        "qty": 1,                           
+        "type": "market",                                        # market, limit, stop, stop_limit, or trailing_stop
         "limit_price": webhook_message['close'],                # required if type is limit or stop_limit
         "time_in_force": "gtc",                                 # day, gtc, opg, cls, ioc, fok.
     }
