@@ -9,6 +9,7 @@ app = Chalice(app_name='tradingwiew-webhook-alerts')
 
 
 BASE_URL = "https://paper-api.alpaca.markets"
+CLOCK_URL = "{}/v2/clock".format(BASE_URL)
 ACCOUNT_URL = "{}/v2/account".format(BASE_URL)
 ORDERS_URL ="{}/v2/orders".format(BASE_URL)
 POSITIONS_URL="{}/v2/positions/SPXL".format(BASE_URL)
@@ -24,6 +25,10 @@ def index():
 def buy_stock():
     #setup
 
+    get_market_hours = requests.get(CLOCK_URL, headers=HEADERS)
+    market_hours = get_market_hours.json()
+    open_close = market_hours['is_open']
+
     #gets account info
     get_account = requests.get(ACCOUNT_URL, headers=HEADERS)
     account_response = json.loads(get_account.content)
@@ -38,7 +43,7 @@ def buy_stock():
     #gets postion data
     position_request = requests.get(POSITIONS_URL, headers=HEADERS)
     position_response = json.loads(position_request.content)
-
+    print(position_response)
     position = {
         "message":  ' ',
         "qty": ' '
@@ -74,6 +79,7 @@ def buy_stock():
         }
     
 
+    #email message setup
     mail_message = 'MERP'
     if data['side'] == 'buy':
         buy_shares = float(acc_info["regt_BP"])//float(data['limit_price'])
@@ -81,9 +87,14 @@ def buy_stock():
         data['qty'] = buy_shares
         mail_message = 'Buying '+str(buy_shares)+' shares'
     elif data['side'] == 'sell':
-        data['qty'] == position['qty']
+        data['qty'] = position['qty']
         mail_message = 'Selling '+str(data['qty'])+' shares'
-    email_text =mail_message+' Equity at '+str(account_response['equity'])
+    email_text =mail_message+' Tendies be lookin like '+str(account_response['equity'])
+
+
+    #change to limit if closed
+    if open_close != True:
+        data['type'] = 'limit'
 
 
     #order request
